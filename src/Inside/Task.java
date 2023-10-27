@@ -1,5 +1,7 @@
+package Inside;
+
 import java.util.Objects;
-import java.util.Scanner;
+import Manager.Status;
 
 public class Task  {
 
@@ -66,4 +68,6 @@ public class Task  {
     public int hashCode() {
         return Objects.hash(getId(), getName(), getDescription(), getStatus());
     }
+
+
 }
