@@ -1,29 +1,33 @@
-package Manager;
+package manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import Inside.Epic;
-import Inside.Task;
-import Inside.Subtask;
+import inside.Epic;
+import inside.Task;
+import inside.Subtask;
 
 
 public class Manager {
 
-    private int createId;
     protected HashMap<Integer, Task> tasks = new HashMap<>();
     protected HashMap<Integer, Epic> epics = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private int createId;
 
-    public List <Task> getTasks() {
-        return (List<Task>) tasks;
+    public List<Task> getTasks() {
+        List<Task> keyTask = new ArrayList<>(tasks.values());
+        return keyTask;
     }
 
-    public List <Epic> getEpics() {
-        return (List<Epic>) epics;
+    public List<Epic> getEpics() {
+        List<Epic> keyEpic = new ArrayList<>(epics.values());
+        return keyEpic;
     }
 
-    public List <Subtask> getSubtasks() {
-        return (List<Subtask>)  subtasks;
+    public List<Subtask> getSubtasks() {
+        List<Subtask> keySubtasks = new ArrayList<>(subtasks.values());
+        return keySubtasks;
     }
 
     public Task createTask(Task task) {
@@ -108,6 +112,3 @@ public class Manager {
         return task;
     }
 }
-
-
-

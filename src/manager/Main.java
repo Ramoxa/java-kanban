@@ -1,9 +1,4 @@
-
-
-import Inside.Subtask;
-import Inside.Task;
-import Inside.Subtask;
-import Manager.Manager;
+package manager;
 
 public class Main {
 

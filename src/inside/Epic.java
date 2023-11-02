@@ -1,4 +1,4 @@
-package Inside;
+package inside;
 
 import java.util.ArrayList;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package Inside;
+package inside;
 
 enum Status {
     NEW,

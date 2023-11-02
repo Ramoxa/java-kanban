@@ -1,7 +1,7 @@
-package Inside;
+package inside;
 
 import java.util.Objects;
-import Manager.Status;
+import manager.Status;
 
 public class Task  {
 
