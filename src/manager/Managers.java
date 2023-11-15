@@ -1,6 +1,9 @@
 package manager;
 
-public class Managers  {
+public class Managers {
+
+    private static Managers instance;
+
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }

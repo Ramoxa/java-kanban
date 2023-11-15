@@ -1,14 +1,16 @@
 package inside;
 
-import java.util.Objects;
 import manager.Status;
 
-public class Task  {
+import java.util.Objects;
+
+public class Task {
 
     protected int id;
     protected String name;
     protected String description;
     protected Status status;
+
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
@@ -48,12 +50,7 @@ public class Task  {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return "Task{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status=" + status + '}';
     }
 
     @Override
