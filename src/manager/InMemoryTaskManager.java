@@ -10,25 +10,24 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Epic> epics;
-    private final HashMap<Integer, Subtask> subtasks;
-    private final HistoryManager historyManager;
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private HistoryManager historyManager;
     private int createId;
 
-    public InMemoryTaskManager() {
-        tasks = new HashMap<>();
-        epics = new HashMap<>();
-        subtasks = new HashMap<>();
-        historyManager = Managers.getDefaultHistory();
+
+    public InMemoryTaskManager (HistoryManager historyManager) {
+     this.historyManager = historyManager;
     }
 
     @Override
     public Task getTask(int id) {
-        if (tasks.get(id) != null) {
-            historyManager.addTask(tasks.get(id));
+        Task task = tasks.get(id);
+        if (task != null) {
+            historyManager.addTask(task);
         }
-        return tasks.get(id);
+        return task;
     }
 
     @Override
