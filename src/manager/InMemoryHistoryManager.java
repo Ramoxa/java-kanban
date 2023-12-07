@@ -9,19 +9,6 @@ import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-
-    private static class Node {
-        Node prev;
-        Node next;
-        Task task;
-
-        public Node(Node prev, Node next, Task task) {
-            this.prev = prev;
-            this.next = next;
-            this.task = task;
-        }
-    }
-
     Node first;
     Node last;
     Map<Integer, Node> nodes = new HashMap<>();
@@ -57,8 +44,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (remove.prev == null && remove.next == null) {
             first = null;
             last = null;
-        }
-        else if (remove.prev == null) {
+        } else if (remove.prev == null) {
             first = remove.next;
             remove.next.prev = null;
         } else if (remove.next == null) {
@@ -67,6 +53,18 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             remove.prev.next = remove.next;
             remove.next.prev = remove.prev;
+        }
+    }
+
+    private static class Node {
+        Node prev;
+        Node next;
+        Task task;
+
+        public Node(Node prev, Node next, Task task) {
+            this.prev = prev;
+            this.next = next;
+            this.task = task;
         }
     }
 }
