@@ -1,14 +1,37 @@
 package inside;
 
+import manager.Status;
+import manager.TaskType;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private ArrayList<Integer> subtasksId = new ArrayList<>();
 
-    public Epic(String name, String description) {
+    private final TaskType taskType;
+
+    public Epic(String name,
+                String description) {
+
         super(name, description);
+        this.subtasksId = new ArrayList<>();
+        this.taskType = TaskType.EPIC;
     }
+
+    public Epic(int id,
+                String name,
+                String description,
+                Status status) {
+
+        super(name, description);
+        this.subtasksId = new ArrayList<>();
+        this.taskType = TaskType.EPIC;
+        this.status = status;
+        this.id = id;
+    }
+
+
 
     public ArrayList<Integer> getIDsOfSubtasks() {
         return subtasksId;

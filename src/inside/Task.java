@@ -1,6 +1,7 @@
 package inside;
 
 import manager.Status;
+import manager.TaskType;
 
 import java.util.Objects;
 
@@ -11,9 +12,23 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public Task(String name, String description) {
+    protected TaskType taskType;
+
+
+    public Task(String name,
+                String description) {
+
+        this.description = description;
+        this.name = name;
+    }
+
+
+    public Task(int id, String name, String description, Status status) {
+        this.id = id;
         this.name = name;
         this.description = description;
+        this.status = status;
+        this.taskType = taskType;
     }
 
     public String getName() {
