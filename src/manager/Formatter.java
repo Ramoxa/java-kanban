@@ -24,8 +24,9 @@ public class Formatter {
 
         List<Integer> history = new ArrayList<>();
 
-        for (var line : value.split(","))
+        for (var line : value.split(",")) {
             history.add(Integer.parseInt(line));
+        }
 
         return history;
 
@@ -40,8 +41,9 @@ public class Formatter {
         allTasks.addAll(tasksManager.getEpics());
         allTasks.addAll(tasksManager.getSubtasks());
 
-        for (var task : allTasks)
+        for (var task : allTasks) {
             result.append(task.toString()).append("\n");
+        }
 
         return result.toString();
 
@@ -50,22 +52,33 @@ public class Formatter {
     public static Task tasksFromString(String value) {
 
         String[] values = value.split(",");
+
         int id = Integer.parseInt(values[0]);
+
         String type = values[1];
+
         String name = values[2];
+
         Status status = Status.valueOf(values[3]);
+
         String description = values[4];
+
         int epicID = 0;
 
-        if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) epicID = Integer.parseInt(values[5]);
+        if (values.length > 5) {
+            epicID = Integer.parseInt(values[5]);
+        }
 
-        if (TaskType.valueOf(type).equals(TaskType.TASK)) return new Task(id, name, description, status);
+        switch (TaskType.valueOf(type)) {
+            case SUBTASK:
+                return new Subtask(id, name, description, status, epicID);
+            case TASK:
+                return new Task(id, name, description, status);
+            case EPIC:
+                return new Epic(id, name, description, status);
+            default:
+                throw new NotSupportedTypeException("Данный формат не поддерживается");
+        }
 
-        if (TaskType.valueOf(type).equals(TaskType.EPIC)) return new Epic(id, name, description, status);
-
-        if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) return new Subtask(id, name, description, status, epicID);
-
-        else throw new NotSupportedTypeException("Данный формат не поддерживается");
     }
-
 }

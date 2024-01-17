@@ -14,34 +14,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         super(historyManager);
     }
 
-    public static FileBackedTasksManager load(File file) {
+    public static FileBackedTasksManager load(Path path) {
 
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager);
 
         try {
-            String fileName = Files.readString(file.toPath());
+
+            String fileName = Files.readString(path);
 
             String[] lines = fileName.split("\n");
 
             for (int i = 1; i < lines.length - 2; i++) {
-                var task = Formatter.tasksFromString(lines[i]);
-                var type = lines[i].split(",")[1];
+                Task task = Formatter.tasksFromString(lines[i]);
+                String type = lines[i].split(",")[1];
 
-                if (TaskType.valueOf(type).equals(TaskType.TASK)) {
-                    fileBackedTasksManager.createTask(task);
-                    historyManager.addTask(fileBackedTasksManager.getTask(task.getId()));
-                }
-
-                if (TaskType.valueOf(type).equals(TaskType.EPIC)) {
-                    var epic = (Epic) task;
-                    fileBackedTasksManager.createEpic(epic);
-                    historyManager.addTask(fileBackedTasksManager.getEpic(epic.getId()));
-                }
-
-                if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) {
-                    var subtask = (Subtask) task;
-                    fileBackedTasksManager.createSubTask(subtask);
-                    historyManager.addTask(fileBackedTasksManager.getSubtask(subtask.getId()));
+                switch (TaskType.valueOf(type)) {
+                    case TASK:
+                        fileBackedTasksManager.createTask(task);
+                        historyManager.addTask(fileBackedTasksManager.getTask(task.getId()));
+                        break;
+                    case EPIC:
+                        Epic epic = (Epic) task;
+                        fileBackedTasksManager.createEpic(epic);
+                        historyManager.addTask(fileBackedTasksManager.getEpic(epic.getId()));
+                        break;
+                    case SUBTASK:
+                        Subtask subtask = (Subtask) task;
+                        fileBackedTasksManager.createSubTask(subtask);
+                        historyManager.addTask(fileBackedTasksManager.getSubtask(subtask.getId()));
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -51,17 +54,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         return fileBackedTasksManager;
 
-
     }
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager);
         Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111"));
         Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222"));
-        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444"));
-        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555"));
         Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
         Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
+        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444"));
+        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555"));
+
 
         fileBackedTasksManager.getTask(task1.getId());
         fileBackedTasksManager.getTask(task2.getId());
@@ -70,7 +73,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fileBackedTasksManager.getSubtask(subtask1.getId());
         fileBackedTasksManager.getSubtask(subtask2.getId());
 
-        FileBackedTasksManager fileManager = FileBackedTasksManager.load(Path.of("results.csv").toFile());
+        FileBackedTasksManager fileManager = FileBackedTasksManager.load(Path.of("results.csv"));
 
 
     }
