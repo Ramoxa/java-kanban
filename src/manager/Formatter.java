@@ -24,7 +24,7 @@ public class Formatter {
 
         List<Integer> history = new ArrayList<>();
 
-        for (var line : value.split(",")) {
+        for (String line : value.split(",")) {
             history.add(Integer.parseInt(line));
         }
 
@@ -35,13 +35,13 @@ public class Formatter {
     public static String tasksToString(TaskManager tasksManager) {
 
         List<Task> allTasks = new ArrayList<>();
-        var result = new StringBuilder();
+        StringBuilder result = new StringBuilder();
 
         allTasks.addAll(tasksManager.getTasks());
         allTasks.addAll(tasksManager.getEpics());
         allTasks.addAll(tasksManager.getSubtasks());
 
-        for (var task : allTasks) {
+        for (Task task : allTasks) {
             result.append(task.toString()).append("\n");
         }
 
@@ -54,15 +54,10 @@ public class Formatter {
         String[] values = value.split(",");
 
         int id = Integer.parseInt(values[0]);
-
         String type = values[1];
-
         String name = values[2];
-
         Status status = Status.valueOf(values[3]);
-
         String description = values[4];
-
         int epicID = 0;
 
         if (values.length > 5) {
@@ -82,3 +77,4 @@ public class Formatter {
 
     }
 }
+

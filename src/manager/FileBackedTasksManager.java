@@ -5,7 +5,6 @@ import inside.Subtask;
 import inside.Task;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 
@@ -15,18 +14,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     public static FileBackedTasksManager load(Path path) {
-
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager);
 
-        try {
+        try (FileInputStream fis = new FileInputStream(path.toFile()); InputStreamReader isr = new InputStreamReader(fis); BufferedReader reader = new BufferedReader(isr)) {
 
-            String fileName = Files.readString(path);
+            String line = reader.readLine();
 
-            String[] lines = fileName.split("\n");
-
-            for (int i = 1; i < lines.length - 2; i++) {
-                Task task = Formatter.tasksFromString(lines[i]);
-                String type = lines[i].split(",")[1];
+            while (line != null) {
+                Task task = Formatter.tasksFromString(line);
+                String type = line.split(",")[1];
 
                 switch (TaskType.valueOf(type)) {
                     case TASK:
@@ -46,6 +42,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                     default:
                         break;
                 }
+
+                line = reader.readLine();
             }
 
         } catch (IOException e) {
@@ -53,7 +51,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
 
         return fileBackedTasksManager;
-
     }
 
     public static void main(String[] args) {
