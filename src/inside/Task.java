@@ -12,7 +12,12 @@ public class Task {
     protected String description;
     protected Status status;
 
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
     protected TaskType taskType;
+
 
 
     public Task(String name,
@@ -20,6 +25,7 @@ public class Task {
 
         this.description = description;
         this.name = name;
+        this.taskType = TaskType.TASK;
     }
 
 
@@ -28,7 +34,7 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.taskType = taskType;
+        this.taskType = TaskType.TASK;
     }
 
     public String getName() {

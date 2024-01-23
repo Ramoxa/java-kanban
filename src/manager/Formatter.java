@@ -11,39 +11,38 @@ public class Formatter {
 
     public static String historyToString(HistoryManager manager) {
 
-        StringBuilder q = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         for (Task task : manager.getHistory())
-            q.append(task.getId()).append(",");
+            sb.append(task.getId()).append(",");
 
-        return q.toString();
+        return sb.toString();
 
     }
+
 
     public static List<Integer> historyFromString(String value) {
 
         List<Integer> history = new ArrayList<>();
 
-        for (String line : value.split(",")) {
+        for (var line : value.split(","))
             history.add(Integer.parseInt(line));
-        }
 
         return history;
 
     }
 
-    public static String tasksToString(TaskManager tasksManager) {
+    public static String tasksToString(InMemoryTaskManager tasksManager) {
 
         List<Task> allTasks = new ArrayList<>();
-        StringBuilder result = new StringBuilder();
+        var result = new StringBuilder();
 
         allTasks.addAll(tasksManager.getTasks());
         allTasks.addAll(tasksManager.getEpics());
         allTasks.addAll(tasksManager.getSubtasks());
 
-        for (Task task : allTasks) {
+        for (var task : allTasks)
             result.append(task.toString()).append("\n");
-        }
 
         return result.toString();
 
@@ -60,7 +59,7 @@ public class Formatter {
         String description = values[4];
         int epicID = 0;
 
-        if (values.length > 5) {
+        if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) {
             epicID = Integer.parseInt(values[5]);
         }
 
@@ -76,5 +75,5 @@ public class Formatter {
         }
 
     }
-}
 
+}

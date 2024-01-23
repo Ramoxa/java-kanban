@@ -23,12 +23,12 @@ public class Subtask extends Task {
         super(name, description);
         this.taskType = TaskType.SUBTASK;
         this.status = status;
-        this.epicId = epicId;
+        this.epicId = epicID;
         this.id = id;
     }
 
 
-    public long getEpicId() {
+    public int getEpicId() {
         return epicId;
     }
 

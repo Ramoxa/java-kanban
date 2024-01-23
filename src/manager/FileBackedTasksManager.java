@@ -5,63 +5,62 @@ import inside.Subtask;
 import inside.Task;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+import static manager.Formatter.historyToString;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    public FileBackedTasksManager(HistoryManager historyManager) {
+    private final File file;
+    public FileBackedTasksManager(HistoryManager historyManager, File file) {
         super(historyManager);
+        this.file = file;
     }
 
-    public static FileBackedTasksManager load(Path path) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager);
+    public void load() {
 
-        try (FileInputStream fis = new FileInputStream(path.toFile()); InputStreamReader isr = new InputStreamReader(fis); BufferedReader reader = new BufferedReader(isr)) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            bufferedReader.readLine();
 
-            String line = reader.readLine();
-
-            while (line != null) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
                 Task task = Formatter.tasksFromString(line);
                 String type = line.split(",")[1];
 
                 switch (TaskType.valueOf(type)) {
                     case TASK:
-                        fileBackedTasksManager.createTask(task);
-                        historyManager.addTask(fileBackedTasksManager.getTask(task.getId()));
+                        createTask(task);
+                        InMemoryTaskManager.historyManager.addTask(task);
                         break;
                     case EPIC:
                         Epic epic = (Epic) task;
-                        fileBackedTasksManager.createEpic(epic);
-                        historyManager.addTask(fileBackedTasksManager.getEpic(epic.getId()));
+                        createEpic(epic);
                         break;
                     case SUBTASK:
                         Subtask subtask = (Subtask) task;
-                        fileBackedTasksManager.createSubTask(subtask);
-                        historyManager.addTask(fileBackedTasksManager.getSubtask(subtask.getId()));
+                        createSubTask(subtask);
                         break;
                     default:
                         break;
                 }
-
-                line = reader.readLine();
             }
-
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла");
         }
 
-        return fileBackedTasksManager;
     }
 
     public static void main(String[] args) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager);
+        Path path = Path.of("1.csv");
+        File file = new File(String.valueOf(path));
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
+
         Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111"));
         Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222"));
         Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
         Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
         Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444"));
         Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555"));
-
 
         fileBackedTasksManager.getTask(task1.getId());
         fileBackedTasksManager.getTask(task2.getId());
@@ -70,9 +69,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fileBackedTasksManager.getSubtask(subtask1.getId());
         fileBackedTasksManager.getSubtask(subtask2.getId());
 
-        FileBackedTasksManager fileManager = FileBackedTasksManager.load(Path.of("results.csv"));
-
-
+        System.out.println(fileBackedTasksManager);
     }
 
     @Override
@@ -162,25 +159,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     private void save() {
-
         File autoSave = new File("results.csv");
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(autoSave)); BufferedReader br = new BufferedReader(new FileReader(autoSave))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(autoSave))) {
 
-            if (br.readLine() == null) {
+            if (autoSave.length() == 0) {
                 String header = "id,type,name,status,description,epic" + "\n";
                 bw.write(header);
             }
 
-            String values = Formatter.tasksToString(this) + "\n" + Formatter.historyToString(historyManager);
-
-            bw.write(values);
+            bw.write(Formatter.tasksToString(this) + "\n" + historyToString(historyManager));
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка записи в файл");
         }
     }
-
 
 }
 
