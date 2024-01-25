@@ -4,37 +4,18 @@ import java.io.File;
 
 public class Managers {
 
-
-
     private static InMemoryTaskManager instance;
-
-
 
     private Managers() {
 
     }
 
-
     public static InMemoryTaskManager getDefault() {
-
-        if (instance == null) {
-
-            instance = new InMemoryTaskManager(getDefaultHistory());
-
-        }
-
-        return instance;
-
+      return new FileBackedTasksManager(getDefaultHistory(), new File("resources.csv"));
     }
 
     public static HistoryManager getDefaultHistory() {
-
         return new InMemoryHistoryManager();
-
-
-
     }
-
-
 
 }

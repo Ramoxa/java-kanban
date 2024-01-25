@@ -32,32 +32,42 @@ public class Formatter {
 
     }
 
-    public static String tasksToString(InMemoryTaskManager tasksManager) {
-
-        List<Task> allTasks = new ArrayList<>();
-        var result = new StringBuilder();
-
-        allTasks.addAll(tasksManager.getTasks());
-        allTasks.addAll(tasksManager.getEpics());
-        allTasks.addAll(tasksManager.getSubtasks());
-
-        for (var task : allTasks)
-            result.append(task.toString()).append("\n");
-
-        return result.toString();
-
+    private static String getParentEpicId(Task task) {
+        if (task instanceof Subtask) {
+            return Integer.toString(((Subtask) task).getEpicId());
+        }
+        return "";
     }
+
+    public static TaskType getType(Task task) {
+        if (task instanceof Epic) {
+            return TaskType.EPIC;
+        } else if (task instanceof Subtask) {
+            return TaskType.SUBTASK;
+        }
+        return TaskType.TASK;
+    }
+
+    public static String toString(Task task) {
+        String[] list = {Integer.toString(task.getId()),
+                getType(task).toString(),
+                task.getName(),
+                task.getStatus().toString(),
+                task.getDescription(),
+                getParentEpicId(task)};
+        return String.join(",", list);
+    }
+
 
     public static Task tasksFromString(String value) {
 
+        int epicID = 0;
         String[] values = value.split(",");
-
         int id = Integer.parseInt(values[0]);
         String type = values[1];
         String name = values[2];
         Status status = Status.valueOf(values[3]);
         String description = values[4];
-        int epicID = 0;
 
         if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) {
             epicID = Integer.parseInt(values[5]);

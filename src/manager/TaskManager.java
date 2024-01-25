@@ -43,5 +43,11 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
+    public List<Epic> getListAllEpic();
+
+    public List<Subtask> getListSubTasks();
+
+    public List<Task> getListAllTasks();
+
 
 }

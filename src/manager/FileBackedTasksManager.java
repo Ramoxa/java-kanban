@@ -6,15 +6,38 @@ import inside.Task;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
+
 
 import static manager.Formatter.historyToString;
 
+
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
+
     public FileBackedTasksManager(HistoryManager historyManager, File file) {
         super(historyManager);
         this.file = file;
+    }
+
+    public static void main(String[] args) {
+
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Managers.getDefaultHistory(), new File("111.csv"));
+
+        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111"));
+        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222"));
+        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
+        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
+        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444"));
+        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555"));
+
+        fileBackedTasksManager.getTask(task1.getId());
+        fileBackedTasksManager.getTask(task2.getId());
+        fileBackedTasksManager.getEpic(epic1.getId());
+        fileBackedTasksManager.getEpic(epic2.getId());
+        fileBackedTasksManager.getSubtask(subtask1.getId());
+        fileBackedTasksManager.getSubtask(subtask2.getId());
+
+        System.out.println(fileBackedTasksManager);
     }
 
     public void load() {
@@ -48,28 +71,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             throw new ManagerSaveException("Ошибка загрузки из файла");
         }
 
-    }
-
-    public static void main(String[] args) {
-        Path path = Path.of("1.csv");
-        File file = new File(String.valueOf(path));
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
-
-        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111"));
-        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222"));
-        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
-        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
-        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444"));
-        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555"));
-
-        fileBackedTasksManager.getTask(task1.getId());
-        fileBackedTasksManager.getTask(task2.getId());
-        fileBackedTasksManager.getEpic(epic1.getId());
-        fileBackedTasksManager.getEpic(epic2.getId());
-        fileBackedTasksManager.getSubtask(subtask1.getId());
-        fileBackedTasksManager.getSubtask(subtask2.getId());
-
-        System.out.println(fileBackedTasksManager);
     }
 
     @Override
@@ -159,21 +160,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     private void save() {
-        File autoSave = new File("results.csv");
+        try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
+            fileWriter.write("id,type,name,status,description,epic\n");
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(autoSave))) {
-
-            if (autoSave.length() == 0) {
-                String header = "id,type,name,status,description,epic" + "\n";
-                bw.write(header);
+            for (Task task : getListAllTasks()) {
+                fileWriter.write(Formatter.toString(task) + "\n");
             }
 
-            bw.write(Formatter.tasksToString(this) + "\n" + historyToString(historyManager));
+            for (Epic epic : getListAllEpic()) {
+                fileWriter.write(Formatter.toString(epic) + "\n");
+            }
+
+            for (Subtask subtask : getListSubTasks()) {
+                fileWriter.write(Formatter.toString(subtask) + "\n");
+            }
+            fileWriter.write("\n");
+            fileWriter.write(historyToString(historyManager));
 
         } catch (IOException e) {
+
             throw new ManagerSaveException("Ошибка записи в файл");
+
         }
     }
-
 }
+
 
