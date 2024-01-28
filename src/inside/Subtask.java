@@ -3,6 +3,7 @@ package inside;
 import manager.Status;
 import manager.TaskType;
 
+import java.time.Instant;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -12,19 +13,30 @@ public class Subtask extends Task {
 
 
     public Subtask(String name,
-                   String description) {
+                   String description,
+                   Instant startTime,
+                   long duration
+                   ) {
 
-        super(name, description);
+        super(name, description, startTime, duration);
+        this.status = Status.NEW;
+        this.description = description;
         this.taskType = TaskType.SUBTASK;
-        this.epicId = epicId;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.name = name;
+
     }
 
-    public Subtask(int id, String name, String description, Status status, int epicID) {
-        super(name, description);
+    public Subtask(int id, String name, Status status, String description, Instant startTime,
+                   long duration, int epicID) {
+
+        super(name, description, startTime, duration);
         this.taskType = TaskType.SUBTASK;
         this.status = status;
-        this.epicId = epicID;
+        this.epicId = epicId;
         this.id = id;
+
     }
 
 
@@ -32,7 +44,7 @@ public class Subtask extends Task {
         return epicId;
     }
 
-    public void setEpicID(int epicId) {
+    public void setEpicId(int epicId) {
         this.epicId = epicId;
     }
 
@@ -42,11 +54,24 @@ public class Subtask extends Task {
         if (!(o instanceof Subtask)) return false;
         if (!super.equals(o)) return false;
         Subtask subtask = (Subtask) o;
-        return getEpicId() == subtask.getEpicId();
+        return getEpicId() == subtask.getEpicId() && getTaskType() == subtask.getTaskType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getEpicId());
+        return Objects.hash(super.hashCode(), getEpicId(), getTaskType());
+    }
+
+    @Override
+    public String toString() {
+        return "Subtask{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", taskType=" + taskType +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                '}';
     }
 }

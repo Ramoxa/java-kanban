@@ -6,41 +6,23 @@ import inside.Task;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-
-
-import static manager.Formatter.historyToString;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    private final File file;
 
-    public FileBackedTasksManager(HistoryManager historyManager, File file) {
-        super(historyManager);
-        this.file = file;
-    }
+        private final File file;
 
-    public static void main(String[] args) {
+        public FileBackedTasksManager(HistoryManager historyManager, File file) {
+            super(historyManager);
+            this.file = file;
+        }
 
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Managers.getDefaultHistory(), new File("111.csv"));
 
-        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111"));
-        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222"));
-        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
-        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
-        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444"));
-        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555"));
-
-        fileBackedTasksManager.getTask(task1.getId());
-        fileBackedTasksManager.getTask(task2.getId());
-        fileBackedTasksManager.getEpic(epic1.getId());
-        fileBackedTasksManager.getEpic(epic2.getId());
-        fileBackedTasksManager.getSubtask(subtask1.getId());
-        fileBackedTasksManager.getSubtask(subtask2.getId());
-
-        System.out.println(fileBackedTasksManager);
-    }
-
-    public void load() {
+        public void load() {
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             bufferedReader.readLine();
@@ -158,10 +140,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
         return savedTask;
     }
+    @Override
+    public List<Task> getTasks() {
+        List<Task> keyTask = new ArrayList<>(tasks.values());
+        save();
+        return keyTask;
+    }
 
-    private void save() {
+    public List<Epic> getEpics() {
+        List<Epic> keyEpic = new ArrayList<>(epics.values());
+        save();
+        return keyEpic;
+    }
+
+    public List<Subtask> getSubtasks() {
+        List<Subtask> keySubtasks = new ArrayList<>(subtasks.values());
+        return keySubtasks;
+    }
+
+    public void save() {
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id,type,name,status,description,startTime,duration,endTime,epic" + "\n");
 
             for (Task task : getListAllTasks()) {
                 fileWriter.write(Formatter.toString(task) + "\n");
@@ -175,7 +174,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 fileWriter.write(Formatter.toString(subtask) + "\n");
             }
             fileWriter.write("\n");
-            fileWriter.write(historyToString(historyManager));
+            fileWriter.write(Formatter.historyToString(historyManager));
 
         } catch (IOException e) {
 
@@ -183,6 +182,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         }
     }
+
+    public static void main(String[] args) {
+
+        InMemoryTaskManager fileBackedTasksManager = Managers.getDefault();
+        
+        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111", Instant.EPOCH, 0));
+        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222", Instant.EPOCH, 0));
+        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
+        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
+        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444", Instant.EPOCH, 0));
+        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555", Instant.EPOCH, 0));
+
+        fileBackedTasksManager.getTask(task1.getId());
+        fileBackedTasksManager.getTask(task2.getId());
+        fileBackedTasksManager.getEpic(epic1.getId());
+        fileBackedTasksManager.getEpic(epic2.getId());
+        fileBackedTasksManager.getSubtask(subtask1.getId());
+        fileBackedTasksManager.getSubtask(subtask2.getId());
+
+
+        System.out.println(fileBackedTasksManager);
+
+    }
 }
+
 
 

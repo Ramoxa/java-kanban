@@ -4,6 +4,7 @@ import inside.Epic;
 import inside.Subtask;
 import inside.Task;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,8 @@ public class Formatter {
                 task.getName(),
                 task.getStatus().toString(),
                 task.getDescription(),
+                String.valueOf(task.getStartTime()),
+                String.valueOf(task.getDuration()),
                 getParentEpicId(task)};
         return String.join(",", list);
     }
@@ -68,18 +71,20 @@ public class Formatter {
         String name = values[2];
         Status status = Status.valueOf(values[3]);
         String description = values[4];
+        Instant startTime = Instant.parse(values[5]);
+        long duration = Long.parseLong(values[6]);
 
         if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) {
-            epicID = Integer.parseInt(values[5]);
+            epicID = Integer.parseInt(values[7]);
         }
 
         switch (TaskType.valueOf(type)) {
             case SUBTASK:
-                return new Subtask(id, name, description, status, epicID);
+                return new Subtask(id, name, status, description, startTime, duration, epicID);
             case TASK:
-                return new Task(id, name, description, status);
+                return new Task(id, name, status, description, startTime, duration);
             case EPIC:
-                return new Epic(id, name, description, status);
+                return new Epic(id, name, status, description, startTime, duration);
             default:
                 throw new NotSupportedTypeException("Данный формат не поддерживается");
         }

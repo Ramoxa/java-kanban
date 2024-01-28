@@ -1,9 +1,0 @@
-id,type,name,status,description,epic
-Task{id=0, name='1', description='1111', status=NEW}
-Task{id=1, name='22', description='22222', status=NEW}
-Epic{subtasksId=[], id=2, name='1', description='7777', status=NEW}
-Epic{subtasksId=[], id=3, name='6666', description='7777', status=NEW}
-Task{id=4, name='3333', description='44444', status=NEW}
-Task{id=5, name='5555', description='55555', status=NEW}
-
-0,1,

@@ -4,10 +4,14 @@ import inside.Epic;
 import inside.Subtask;
 import inside.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public interface TaskManager {
+
+    // сравнение тасков по getStartTime()
+    int compare(Task o1, Task o2);
 
     Task getTask(int id);
 
@@ -45,9 +49,16 @@ public interface TaskManager {
 
     public List<Epic> getListAllEpic();
 
-    public List<Subtask> getListSubTasks();
+    public ArrayList<Subtask> getListSubTasks();
 
     public List<Task> getListAllTasks();
 
+    public List<Epic> getEpicsByStatus(Status status);
 
+
+    Task getTaskById(int id);
+
+    Epic getEpicById(int id);
+
+    Subtask getSubtaskById(int id);
 }
