@@ -1,8 +1,5 @@
 package tasks;
 
-import manager.Status;
-import manager.TaskType;
-
 import java.time.Instant;
 import java.util.Objects;
 
@@ -18,7 +15,6 @@ public class Subtask extends Task {
 
         super(name, description, startTime, duration);
         this.status = Status.NEW;
-        this.description = description;
         this.taskType = TaskType.SUBTASK;
         this.startTime = startTime;
         this.duration = duration;

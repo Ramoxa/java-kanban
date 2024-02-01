@@ -1,8 +1,5 @@
 package tasks;
 
-import manager.Status;
-import manager.TaskType;
-
 import java.time.Instant;
 import java.util.Objects;
 

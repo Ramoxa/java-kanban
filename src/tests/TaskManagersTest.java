@@ -1,8 +1,8 @@
 package tests;
 
-import manager.InMemoryTaskManager;
-import manager.Status;
-import manager.TaskManager;
+import manager.taskManagers.InMemoryTaskManager;
+import tasks.Status;
+import manager.taskManagers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

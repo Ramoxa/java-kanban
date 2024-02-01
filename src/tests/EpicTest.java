@@ -1,7 +1,7 @@
 package tests;
 
-import manager.InMemoryTaskManager;
-import manager.Status;
+import manager.taskManagers.InMemoryTaskManager;
+import tasks.Status;
 import org.junit.Test;
 import tasks.Epic;
 

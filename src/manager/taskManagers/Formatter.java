@@ -1,12 +1,10 @@
-package manager;
+package manager.taskManagers;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import manager.exceptions.NotSupportedTypeException;
+import manager.historyManagers.HistoryManager;
+import tasks.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
@@ -20,18 +18,6 @@ public class Formatter {
             sb.append(task.getId()).append(",");
 
         return sb.toString();
-
-    }
-
-
-    public static List<Integer> historyFromString(String value) {
-
-        List<Integer> history = new ArrayList<>();
-
-        for (var line : value.split(","))
-            history.add(parseInt(line));
-
-        return history;
 
     }
 
@@ -51,14 +37,12 @@ public class Formatter {
         return TaskType.TASK;
     }
 
-    public static String toString(Task task) {
+    public static String taskToString(Task task) {
         String[] list = {Integer.toString(task.getId()), getType(task).toString(), task.getName(), task.getStatus().toString(), task.getDescription(), String.valueOf(task.getStartTime()), String.valueOf(task.getDuration()), getParentEpicId(task)};
         return String.join(",", list);
     }
 
-
     public static Task tasksFromString(String value) {
-
         int epicID = 0;
         String[] values = value.split(",");
         int id = parseInt(values[0]);

@@ -1,6 +1,6 @@
 package tests;
 
-import loadManager.FileBackedTasksManager;
+import manager.taskManagers.FileBackedTasksManager;
 import org.junit.Test;
 import tasks.Epic;
 import tasks.Subtask;
@@ -29,12 +29,11 @@ public class FileBackedTasksManagerTest extends TaskManagersTest<FileBackedTasks
         assertEquals(2, fileBackedTasksManager.getEpics().size());
         assertEquals(0, fileBackedTasksManager.getHistory().size());
 
-        FileBackedTasksManager manager1 = new FileBackedTasksManager(new File("test.txt"));
-        manager1.load();
+        FileBackedTasksManager manager1 = FileBackedTasksManager.loadFromFile(new File("test.txt"));
         assertEquals(2, manager1.getTasks().size());
         assertEquals(2, manager1.getSubtasks().size());
         assertEquals(2, manager1.getEpics().size());
-        assertEquals(2, manager1.getHistory().size());
+        assertEquals(0, manager1.getHistory().size());
 
     }
 
@@ -50,7 +49,7 @@ public class FileBackedTasksManagerTest extends TaskManagersTest<FileBackedTasks
         assertEquals(0, fileBackedTasksManager.getSubtasks().size());
         assertEquals(2, fileBackedTasksManager.getEpics().size());
 
-        FileBackedTasksManager manager1 = new FileBackedTasksManager(new File("test.txt"));
+        FileBackedTasksManager manager1 = FileBackedTasksManager.loadFromFile(new File("test.txt"));
         manager1.load();
         assertEquals(2, manager1.getTasks().size());
         assertEquals(0, manager1.getSubtasks().size());

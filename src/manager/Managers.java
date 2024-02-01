@@ -1,13 +1,14 @@
 package manager;
 
-import loadManager.FileBackedTasksManager;
-
-import java.io.File;
+import manager.historyManagers.HistoryManager;
+import manager.historyManagers.InMemoryHistoryManager;
+import manager.taskManagers.InMemoryTaskManager;
+import manager.taskManagers.TaskManager;
 
 public class Managers {
 
     public static TaskManager getDefault() {
-        return new FileBackedTasksManager(new File("data"));
+        return new InMemoryTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {

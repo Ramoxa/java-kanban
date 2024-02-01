@@ -1,6 +1,7 @@
-package manager;
+package manager.taskManagers;
 
 import tasks.Epic;
+import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
