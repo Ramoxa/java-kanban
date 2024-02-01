@@ -1,103 +1,64 @@
 package tests;
-import inside.*;
-import manager.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+
+import loadManager.FileBackedTasksManager;
+import org.junit.Test;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static manager.InMemoryTaskManager.historyManager;
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.util.Collections;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 
-public class FileBackedTasksManagerTest extends TaskManagersTest {
-    public static final Path path = Path.of("data.test.csv");
-    File file = new File(String.valueOf(path));
+public class FileBackedTasksManagerTest extends TaskManagersTest<FileBackedTasksManager> {
 
-    @BeforeEach
-    public void beforeEach() {
-        manager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
-    }
+    @Test
+    public void testLoad() {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("test.txt"));
+        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111", Instant.EPOCH, 0));
+        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222", Instant.EPOCH, 0));
+        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
+        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
+        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444", Instant.EPOCH, 0));
+        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555", Instant.EPOCH, 0));
 
-    @AfterEach
-    public void afterEach() {
-        try {
-            Files.delete(path);
-        } catch (IOException exception) {
-            System.out.println(exception.getMessage());
-        }
+        assertEquals(2, fileBackedTasksManager.getTasks().size());
+        assertEquals(2, fileBackedTasksManager.getSubtasks().size());
+        assertEquals(2, fileBackedTasksManager.getEpics().size());
+        assertEquals(0, fileBackedTasksManager.getHistory().size());
+
+        FileBackedTasksManager manager1 = new FileBackedTasksManager(new File("test.txt"));
+        manager1.load();
+        assertEquals(2, manager1.getTasks().size());
+        assertEquals(2, manager1.getSubtasks().size());
+        assertEquals(2, manager1.getEpics().size());
+        assertEquals(2, manager1.getHistory().size());
+
     }
 
     @Test
-    public void shouldCorrectlySaveAndLoad() {
-        Task task = new Task("Description", "Title", Instant.EPOCH, 0);
-        manager.createTask(task);
-        Epic epic = new Epic("Description", "Title");
-        manager.createEpic(epic);
-        FileBackedTasksManager fileManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
-        fileManager.load();
-        assertEquals(List.of(task), manager.getListAllTasks());
-        assertEquals(List.of(epic), manager.getListAllEpic());
+    public void testLoadNoSubtask() {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("test.txt"));
+        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111", Instant.EPOCH, 0));
+        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222", Instant.EPOCH, 0));
+        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
+        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
+
+        assertEquals(2, fileBackedTasksManager.getTasks().size());
+        assertEquals(0, fileBackedTasksManager.getSubtasks().size());
+        assertEquals(2, fileBackedTasksManager.getEpics().size());
+
+        FileBackedTasksManager manager1 = new FileBackedTasksManager(new File("test.txt"));
+        manager1.load();
+        assertEquals(2, manager1.getTasks().size());
+        assertEquals(0, manager1.getSubtasks().size());
+        assertEquals(2, manager1.getEpics().size());
+
     }
 
-    @Test
-    public void shouldSaveAndLoadEmptyTasksEpicsSubtasks() {
-        FileBackedTasksManager fileManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
-        fileManager.save();
-        fileManager.load();
-        assertEquals(Collections.EMPTY_LIST, manager.getListAllTasks());
-        assertEquals(Collections.EMPTY_LIST, manager.getListAllEpic());
-        assertEquals(Collections.EMPTY_LIST, manager.getListSubTasks());
-    }
 
-    @Test
-    public void shouldSaveAndLoadEmptyHistory() {
-        FileBackedTasksManager fileManager = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
-        fileManager.save();
-        fileManager.load();
-        assertEquals(Collections.EMPTY_LIST, manager.getHistory());
-    }
-
-    @Test
-    public void shouldBeFileBackupManager() {
-        Path path3 = Path.of("src//tests//data.test.csv");
-        File file = new File(String.valueOf(path3));
-        FileBackedTasksManager test = new FileBackedTasksManager(Managers.getDefaultHistory(), file);
-
-        Task task = new Task("Description", "Title", Instant.EPOCH, 0);
-        test.createTask(task);
-        Epic epic = new Epic("TestEpic", "Test description");
-        test.createEpic(epic);
-        Subtask subTask = new Subtask("Description", "Title", Instant.EPOCH, 0);
-        test.createSubTask(subTask);
-        Subtask subTask2 = new Subtask("Description", "Title", Instant.EPOCH, 0);
-        test.createSubTask(subTask2);
-        Epic epic2 = new Epic("TestEpic 2", "Test description 2");
-        test.createEpic(epic2);
-        Task task2 = new Task("Description", "Title", Instant.EPOCH, 0) ;
-        test.createTask(task2);
-        test.getTaskById(1);
-        test.getEpicById(2);
-        test.getSubtaskById(3);
-
-        assertEquals(test.getTasks(), test.getTasks());
-        assertEquals(test.getSubtasks(), test.getSubtasks());
-        assertEquals(test.getEpics(), test.getEpics());
-        assertEquals(test.getHistory(), test.getHistory());
-        assertEquals(test.getPrioritizedTasks(), test.getPrioritizedTasks());
-        assertNotNull(test);
-    }
 }
+
 

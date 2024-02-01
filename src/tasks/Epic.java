@@ -1,4 +1,4 @@
-package inside;
+package tasks;
 
 import manager.Status;
 import manager.TaskType;
@@ -10,21 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private final TaskType taskType;
     private ArrayList<Integer> subtasksId;
     private Instant endTime = Instant.ofEpochSecond(0);
 
-    public Epic(String name, String description) {
-        super(name, description, Instant.ofEpochSecond(0), 0);
-        this.subtasksId = new ArrayList<>();
-        this.taskType = TaskType.EPIC;
-    }
-    public Epic(int id,
-                String name,
-                Status status,
-                String description,
-                Instant startTime,
-                long duration) {
+    public Epic(int id, String name, Status status, String description, Instant startTime, long duration) {
 
         super(name, description, startTime, duration);
         this.endTime = super.getEndTime();
@@ -33,6 +22,11 @@ public class Epic extends Task {
         this.status = status;
         this.id = id;
 
+    }
+    public Epic(String name, String description) {
+        super(name, description, Instant.ofEpochSecond(0), 0);
+        this.subtasksId = new ArrayList<>();
+        this.taskType = TaskType.EPIC;
     }
 
     public void setEndTime(Instant endTime) {
@@ -50,17 +44,13 @@ public class Epic extends Task {
         for (Integer id : getIDsOfSubtasks(id)) {
             Subtask subtask = subs.get(id);
 
-            if (subtask.getStatus() == Status.NEW)
-                isNew += 1;
+            if (subtask.getStatus() == Status.NEW) isNew += 1;
 
-            if (subtask.getStatus() == Status.DONE)
-                isDone += 1;
+            if (subtask.getStatus() == Status.DONE) isDone += 1;
 
-            if (subtask.getStartTime().isBefore(startTime))
-                startTime = subtask.getStartTime();
+            if (subtask.getStartTime().isBefore(startTime)) startTime = subtask.getStartTime();
 
-            if (subtask.getEndTime().isAfter(endTime))
-                endTime = subtask.getEndTime();
+            if (subtask.getEndTime().isAfter(endTime)) endTime = subtask.getEndTime();
         }
 
         this.startTime = startTime;
@@ -106,14 +96,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
 
-        return id + ","
-                + taskType + ","
-                + name + ","
-                + status + ","
-                + description + ","
-                + getStartTime() + ","
-                + duration + ","
-                + getEndTime();
+        return id + "," + taskType + "," + name + "," + status + "," + description + "," + getStartTime() + "," + duration + "," + getEndTime();
 
     }
 }

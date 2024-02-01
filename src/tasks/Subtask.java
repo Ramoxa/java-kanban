@@ -1,4 +1,4 @@
-package inside;
+package tasks;
 
 import manager.Status;
 import manager.TaskType;
@@ -8,8 +8,6 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     private int epicId;
-
-    private TaskType taskType;
 
 
     public Subtask(String name,
@@ -29,7 +27,7 @@ public class Subtask extends Task {
     }
 
     public Subtask(int id, String name, Status status, String description, Instant startTime,
-                   long duration, int epicID) {
+                   long duration, int epicId) {
 
         super(name, description, startTime, duration);
         this.taskType = TaskType.SUBTASK;
@@ -64,14 +62,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                ", taskType=" + taskType +
-                ", startTime=" + startTime +
-                ", duration=" + duration +
-                '}';
+        return id + "," + taskType + "," + name + "," + status + "," + description + "," + getStartTime() + "," + duration + "," + getEndTime();
     }
 }

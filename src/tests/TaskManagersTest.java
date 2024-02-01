@@ -1,25 +1,25 @@
 package tests;
 
-import inside.Epic;
-import inside.Subtask;
-import inside.Task;
 import manager.InMemoryTaskManager;
 import manager.Status;
 import manager.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.time.Instant;
 import java.util.List;
 
-import static manager.InMemoryTaskManager.historyManager;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 abstract class TaskManagersTest<T extends TaskManager> {
 
-    protected T manager;
+    protected TaskManager manager;
     protected Task task;
     protected Epic epic;
     protected Subtask subTask;
@@ -35,7 +35,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
     @Test
     public void testGetTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createTask(task);
 
         List<Task> tasksList = taskManager.getTasks();
@@ -49,8 +49,8 @@ abstract class TaskManagersTest<T extends TaskManager> {
     }
 
     @Test
-    public void testGetSubtask () {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+    public void testGetSubtask() {
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createSubTask(subTask);
 
         List<Subtask> tasksList = taskManager.getSubtasks();
@@ -64,8 +64,8 @@ abstract class TaskManagersTest<T extends TaskManager> {
     }
 
     @Test
-    void addNewTask () {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+    void addNewTask() {
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createTask(task);
         List<Task> tasksList = taskManager.getTasks();
         assertNotNull(tasksList);
@@ -76,7 +76,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
     @Test
     void addNewEpic() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createEpic(epic);
         List<Epic> epicList = taskManager.getEpics();
         assertNotNull(epicList);
@@ -86,7 +86,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
     @Test
     void addNewSubtask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createSubTask(subTask);
         final Subtask savedTask = taskManager.getSubtask(subTask.getId());
         assertNotNull(savedTask);
@@ -99,30 +99,28 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
     @Test
     void deleteTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createTask(task);
         List<Task> tasks = taskManager.getListAllTasks();
         Assertions.assertEquals(1, tasks.size());
-        taskManager.deleteTask(task);
-        List<Task> tasks1 = taskManager.getListAllTasks();
-        Assertions.assertEquals(0, tasks1.size());
+        taskManager.deleteTask(task.getId());
+        assertFalse(taskManager.getTasks().contains(task));
     }
 
 
     @Test
     void deleteSubTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createSubTask(subTask);
         List<Subtask> subtasks = taskManager.getSubtasks();
         assertEquals(1, subtasks.size());
-        taskManager.deleteSubtask(subTask);
-        List<Subtask> subtasks1 = taskManager.getSubtasks();
-        assertEquals(0, subtasks1.size());
+        taskManager.deleteSubtask(subTask.getId());
+        assertFalse(taskManager.getTasks().contains(subTask));
     }
 
     @Test
     void updateTasks() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createTask(task);
         List<Task> tasks = taskManager.getTasks();
         Assertions.assertEquals(task, tasks.get(0));
@@ -133,7 +131,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
     @Test
     void updateSubtasks() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createSubTask(subTask);
         List<Subtask> subtasks = taskManager.getSubtasks();
         Assertions.assertEquals(subTask, subtasks.get(0));
@@ -144,7 +142,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
     @Test
     public void setEpicEndTimeTest() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createEpic(epic);
         epic.setEndTime(Instant.ofEpochSecond(0));
         Assertions.assertEquals(Instant.ofEpochSecond(0), epic.getEndTime());

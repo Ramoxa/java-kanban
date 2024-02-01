@@ -1,17 +1,14 @@
 package manager;
 
-import inside.Epic;
-import inside.Subtask;
-import inside.Task;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public interface TaskManager {
-
-    // сравнение тасков по getStartTime()
-    int compare(Task o1, Task o2);
 
     Task getTask(int id);
 
@@ -37,23 +34,19 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
-    Epic addSubtaskToEpic(Epic epic, Subtask subtask);
+    void deleteSubtask(int id);
 
-    Subtask deleteSubtask(Subtask subtask);
-
-    Epic deleteSubtaskFromEpic(Epic epic, Subtask subtask);
-
-    Task deleteTask(Task task);
+    void deleteTask(int id);
 
     List<Task> getHistory();
 
-    public List<Epic> getListAllEpic();
+    List<Epic> getListAllEpic();
 
-    public ArrayList<Subtask> getListSubTasks();
+    ArrayList<Subtask> getListSubTasks();
 
-    public List<Task> getListAllTasks();
+    List<Task> getListAllTasks();
 
-    public List<Epic> getEpicsByStatus(Status status);
+    List<Epic> getEpicsByStatus(Status status);
 
 
     Task getTaskById(int id);
@@ -61,4 +54,6 @@ public interface TaskManager {
     Epic getEpicById(int id);
 
     Subtask getSubtaskById(int id);
+
+    void load();
 }

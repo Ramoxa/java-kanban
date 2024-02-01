@@ -1,28 +1,27 @@
 package tests;
 
-import inside.Epic;
 import manager.InMemoryTaskManager;
 import manager.Status;
 import org.junit.Test;
+import tasks.Epic;
 
 import java.util.List;
 import java.util.Objects;
 
-import static manager.InMemoryTaskManager.historyManager;
 import static org.junit.Assert.assertEquals;
 
 public class EpicTest {
 
     @Test
     public void testEmptyEpicList() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         List<Epic> epicList = taskManager.getEpics();
         assertEquals(0, epicList.size());
     }
 
     @Test
     public void testAllNewEpics() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         Epic epic1 = new Epic("аа", "аа");
         Epic epic2 = new Epic("аа", "аа");
         taskManager.createEpic(epic1);
@@ -33,7 +32,7 @@ public class EpicTest {
 
     @Test
     public void testAllDoneEpics() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("аа", "аа");
         taskManager.createEpic(epic);
         epic.setStatus(Status.DONE);
@@ -44,7 +43,7 @@ public class EpicTest {
 
     @Test
     public void testMixedStatusEpics() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         Epic epic1 = new Epic("аа", "аа");
         Epic epic2 = new Epic("аа", "аа");
         taskManager.createEpic(epic1);
@@ -62,7 +61,7 @@ public class EpicTest {
 
     @Test
     public void testInProgressEpic() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("аа", "аа");
         taskManager.createEpic(epic);
         epic.setStatus(Status.IN_PROGRESS);
@@ -70,7 +69,6 @@ public class EpicTest {
         List<Epic> epicList = taskManager.getEpicsByStatus(Status.IN_PROGRESS);
         assertEquals(1, epicList.size());
     }
-
 
 
 }

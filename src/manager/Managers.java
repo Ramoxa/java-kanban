@@ -1,11 +1,13 @@
 package manager;
 
+import loadManager.FileBackedTasksManager;
+
 import java.io.File;
 
 public class Managers {
 
-    public static InMemoryTaskManager getDefault() {
-        return new FileBackedTasksManager(getDefaultHistory(), new File("resources.csv"));
+    public static TaskManager getDefault() {
+        return new FileBackedTasksManager(new File("data"));
     }
 
     public static HistoryManager getDefaultHistory() {

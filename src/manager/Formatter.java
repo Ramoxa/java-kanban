@@ -1,12 +1,14 @@
 package manager;
 
-import inside.Epic;
-import inside.Subtask;
-import inside.Task;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Integer.parseInt;
 
 public class Formatter {
 
@@ -27,7 +29,7 @@ public class Formatter {
         List<Integer> history = new ArrayList<>();
 
         for (var line : value.split(","))
-            history.add(Integer.parseInt(line));
+            history.add(parseInt(line));
 
         return history;
 
@@ -50,14 +52,7 @@ public class Formatter {
     }
 
     public static String toString(Task task) {
-        String[] list = {Integer.toString(task.getId()),
-                getType(task).toString(),
-                task.getName(),
-                task.getStatus().toString(),
-                task.getDescription(),
-                String.valueOf(task.getStartTime()),
-                String.valueOf(task.getDuration()),
-                getParentEpicId(task)};
+        String[] list = {Integer.toString(task.getId()), getType(task).toString(), task.getName(), task.getStatus().toString(), task.getDescription(), String.valueOf(task.getStartTime()), String.valueOf(task.getDuration()), getParentEpicId(task)};
         return String.join(",", list);
     }
 
@@ -66,7 +61,7 @@ public class Formatter {
 
         int epicID = 0;
         String[] values = value.split(",");
-        int id = Integer.parseInt(values[0]);
+        int id = parseInt(values[0]);
         String type = values[1];
         String name = values[2];
         Status status = Status.valueOf(values[3]);
@@ -75,7 +70,7 @@ public class Formatter {
         long duration = Long.parseLong(values[6]);
 
         if (TaskType.valueOf(type).equals(TaskType.SUBTASK)) {
-            epicID = Integer.parseInt(values[7]);
+            epicID = parseInt(values[7]);
         }
 
         switch (TaskType.valueOf(type)) {
