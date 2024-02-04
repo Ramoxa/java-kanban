@@ -1,7 +1,5 @@
 package manager.taskManagers;
 
-
-import manager.exceptions.ManagerSaveException;
 import manager.Managers;
 import tasks.Status;
 import manager.historyManagers.HistoryManager;
@@ -9,21 +7,16 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class InMemoryTaskManager implements TaskManager {
-
 
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     public HistoryManager historyManager;
-    protected int createId = 1;
-    private Set<Task> prioritizedTasks;
+    protected int createId = 0;
 
     public InMemoryTaskManager() {
         historyManager = Managers.getDefaultHistory();
@@ -33,24 +26,8 @@ public class InMemoryTaskManager implements TaskManager {
         return ++createId;
     }
 
-    public List<Task> getPrioritizedTasks() {
-        return new ArrayList<>(prioritizedTasks);
-    }
-
-    private void addToPrioritizedTasks(Task task) {
-        prioritizedTasks.add(task);
-        checkIntersections();
-
-    }
-
-    private void checkIntersections() {
-        List<Task> prioritizedTasks = getPrioritizedTasks();
-        for (int i = 1; i < prioritizedTasks.size(); i++) {
-            Task prioritizedTask = prioritizedTasks.get(i);
-            if (prioritizedTask.getStartTime().isBefore(prioritizedTasks.get(i - 1).getEndTime()))
-                throw new ManagerSaveException("Пересечение между " + prioritizedTasks.get(i) + prioritizedTasks.get(i - 1));
-        }
-    }
+    final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
+            Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
 
 
     @Override
@@ -82,51 +59,52 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getTasks() {
-        List<Task> keyTask = new ArrayList<>(tasks.values());
-        return keyTask;
+        return new ArrayList<>(tasks.values());
     }
 
 
     @Override
     public List<Epic> getEpics() {
-        List<Epic> keyEpic = new ArrayList<>(epics.values());
-        return keyEpic;
+        return new ArrayList<>(epics.values());
     }
 
 
     @Override
     public List<Subtask> getSubtasks() {
-        List<Subtask> keySubtasks = new ArrayList<>(subtasks.values());
-        return keySubtasks;
+        return new ArrayList<>(subtasks.values());
     }
 
 
     @Override
     public Task createTask(Task task) {
         task.setStatus(Status.NEW);
-        task.setId(createId++);
-        tasks.put(task.getId(), task);
+        int newTaskId = getNextID();
+        task.setStatus(Status.NEW);
+        task.setId(newTaskId);
+        tasks.put(newTaskId, task);
+        prioritizedTasks.add(task);
         return task;
-
-    }
-
-    @Override
-    public Subtask createSubTask(Subtask subtask) {
-        subtask.setStatus(Status.NEW);
-        subtask.setId(createId++);
-        subtasks.put(subtask.getId(), subtask);
-        return subtask;
-
     }
 
     @Override
     public Epic createEpic(Epic epic) {
-        epic.setStatus(Status.NEW);
-        epic.setId(createId++);
+        epic.setId(getNextID());
         epics.put(epic.getId(), epic);
         return epic;
     }
 
+    @Override
+    public Subtask createSubTask(Subtask subtask) {
+        if (subtask != null) {
+        prioritizedTasks.add(subtask);
+        subtask.setId(createId++);
+        subtask.setStatus(Status.NEW);
+        subtasks.put(subtask.getId(), subtask);
+        Epic epic = epics.get(subtask.getEpicId());
+        return subtask;
+    } else {
+            return null;
+        } }
 
     @Override
     public void updateTask(Task task) {
@@ -152,13 +130,11 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-
     public void updateSubtask(Subtask subtask) {
         int id = subtask.getId();
         Subtask currentSubtask = subtasks.get(id);
         if (currentSubtask == null) {
             return;
-
         }
         subtasks.replace(subtask.getId(), subtask);
         System.out.println("Обновлено");
@@ -169,7 +145,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtask(int id) {
         subtasks.get(id).setStatus(Status.DONE);
         if (subtasks.containsKey(id)) {
-            tasks.remove(id);
+            subtasks.remove(id);
         }
     }
 
@@ -228,9 +204,5 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasks.get(id);
 
     }
-
-    @Override
-    public void load() {
-
-    }
 }
+

@@ -31,7 +31,7 @@ public class HistoryManagerTest {
     void beforeEach() {
         task = new Task("1", "1111", Instant.EPOCH, 0);
         epic = new Epic("222", "3333");
-        subTask = new Subtask("333", "4444", Instant.EPOCH, 0);
+
     }
 
     @Test

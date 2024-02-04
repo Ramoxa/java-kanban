@@ -1,14 +1,16 @@
 package tests;
 
 import manager.taskManagers.InMemoryTaskManager;
+import org.junit.jupiter.api.Test;
 import tasks.Status;
-import org.junit.Test;
+
 import tasks.Epic;
 
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class EpicTest {
 

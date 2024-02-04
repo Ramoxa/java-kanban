@@ -4,43 +4,41 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private int epicId;
-
+    private final int epicID;
 
     public Subtask(String name,
                    String description,
                    Instant startTime,
-                   long duration
-                   ) {
+                   long duration,
+                   int epicID) {
 
         super(name, description, startTime, duration);
-        this.status = Status.NEW;
         this.taskType = TaskType.SUBTASK;
-        this.startTime = startTime;
-        this.duration = duration;
-        this.name = name;
+        this.epicID = epicID;
 
     }
 
-    public Subtask(int id, String name, Status status, String description, Instant startTime,
-                   long duration, int epicId) {
+    public Subtask(int id,
+                   String name,
+                   Status status,
+                   String description,
+                   Instant startTime,
+                   long duration,
+                   int epicID) {
 
         super(name, description, startTime, duration);
         this.taskType = TaskType.SUBTASK;
         this.status = status;
-        this.epicId = epicId;
+        this.epicID = epicID;
         this.id = id;
 
     }
 
 
     public int getEpicId() {
-        return epicId;
+        return epicID;
     }
 
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
-    }
 
     @Override
     public boolean equals(Object o) {

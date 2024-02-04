@@ -1,5 +1,4 @@
 package manager.taskManagers;
-import manager.Managers;
 import manager.exceptions.ManagerSaveException;
 import tasks.Epic;
 import tasks.Subtask;
@@ -19,20 +18,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222", Instant.EPOCH, 0));
         Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
         Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
-        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("3333", "44444", Instant.EPOCH, 0));
-        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("5555", "55555", Instant.EPOCH, 0));
+        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("аа", "ааа", Instant.ofEpochSecond(11111), 0, epic1.getId()));
+        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("bbbb", "qqqq", Instant.ofEpochSecond(22222), 0, epic2.getId()));
 
         fileBackedTasksManager.getTask(task1.getId());
         fileBackedTasksManager.getTask(task2.getId());
-        fileBackedTasksManager.getEpic(epic1.getId());
-        fileBackedTasksManager.getEpic(epic2.getId());
-        fileBackedTasksManager.getSubtask(subtask1.getId());
-        fileBackedTasksManager.getSubtask(subtask2.getId());
 
         FileBackedTasksManager manager2 = FileBackedTasksManager.loadFromFile(new File("data"));
         System.out.println(manager2.getTasks());
         System.out.println(manager2.getEpics());
         System.out.println(manager2.getSubtasks());
+        System.out.println(manager2.getHistory());
 
     }
     private final File file;
@@ -60,11 +56,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             fileWriter.write(Formatter.historyToString(historyManager));
 
         } catch (IOException e) {
-
             throw new ManagerSaveException("Ошибка записи в файл");
-
         }
-
     }
 
     // сделал метод приватным согласно первому ревью
@@ -93,10 +86,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                         break;
                 }
             }
+            String historyLine = bufferedReader.readLine();
+            if (historyLine != null && !historyLine.isBlank()) {
+                String[] historyIds = historyLine.split(",");
+                for (String id : historyIds) {
+                    int taskId = Integer.parseInt(id);
+                    Task task = getTask(taskId);
+                    if (task != null) {
+                        historyManager.addTask(task);
+                    }
+                }
+            }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла");
         }
-
     }
 
     // реализовал тот же метод с учетом комментариев второго ревью
@@ -129,23 +132,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public Task createTask(Task task) {
-        Task savedTask = super.createTask(task);
+        Task newTask = super.createTask(task);
         save();
-        return savedTask;
+        return newTask;
     }
 
     @Override
     public Subtask createSubTask(Subtask subtask) {
-        Subtask savedSubtask = super.createSubTask(subtask);
+        Subtask newSubtaskId = super.createSubTask(subtask);
         save();
-        return savedSubtask;
+        return newSubtaskId;
     }
 
     @Override
     public Epic createEpic(Epic epic) {
-        Epic savedEpic = super.createEpic(epic);
+        Epic newEpic = super.createEpic(epic);
         save();
-        return savedEpic;
+        return newEpic;
     }
 
     @Override

@@ -56,5 +56,4 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    void load();
 }
