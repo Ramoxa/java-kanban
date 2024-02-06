@@ -14,7 +14,6 @@ public class Task {
     protected long duration;
 
     public Task(int id, String name, Status status, String description, Instant startTime, long duration) {
-
         this.description = description;
         this.taskType = TaskType.TASK;
         this.startTime = startTime;
@@ -22,18 +21,15 @@ public class Task {
         this.duration = duration;
         this.name = name;
         this.id = id;
-
     }
 
     public Task(String name, String description, Instant startTime, long duration) {
-
         this.status = Status.NEW;
         this.description = description;
         this.taskType = TaskType.TASK;
         this.startTime = startTime;
         this.duration = duration;
         this.name = name;
-
     }
 
     public Instant getStartTime() {
@@ -47,7 +43,6 @@ public class Task {
     public Instant getEndTime() {
         final byte SECONDS_IN_ONE_MINUTE = 60;
         return startTime.plusSeconds(duration * SECONDS_IN_ONE_MINUTE);
-
     }
 
     public long getDuration() {
@@ -94,7 +89,6 @@ public class Task {
         this.status = status;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -110,8 +104,7 @@ public class Task {
 
     @Override
     public String toString() {
-
         return id + "," + taskType + "," + name + "," + status + "," + description + "," + getStartTime() + "," + duration + "," + getEndTime();
-
     }
+
 }

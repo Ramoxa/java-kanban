@@ -1,10 +1,6 @@
 package tests;
 
 import manager.taskManagers.FileBackedTasksManager;
-import manager.taskManagers.InMemoryTaskManager;
-import manager.taskManagers.TaskManager;
-
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -17,27 +13,26 @@ import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class FileBackedTasksManagerTest extends TaskManagersTest <FileBackedTasksManager> {
-    private File file;
+public class FileBackedTasksManagerTest extends TaskManagersTest<FileBackedTasksManager> {
     FileBackedTasksManager fileBackedTasksManager;
+    private File file;
+
     @BeforeEach
     public void startMethod() {
         file = new File("test.txt");
         fileBackedTasksManager = new FileBackedTasksManager(file);
         taskManager = new FileBackedTasksManager(file);
-        task = new Task("Task", "22222",
-                Instant.EPOCH, 30);
+        task = new Task("Task", "22222", Instant.EPOCH, 30);
         task.setId(1);
         taskManager.createTask(task);
         epic = new Epic("epic", "3333333");
         epic.setId(2);
         taskManager.createEpic(epic);
-        subTask = new Subtask("subtask", "jrwijrw",
-                Instant.EPOCH, 30, epic.getId());
+        subTask = new Subtask("subtask", "jrwijrw", Instant.EPOCH, 30, epic.getId());
         subTask.setId(3);
         taskManager.createSubTask(subTask);
-
     }
+
     @Test
     public void testLoad() {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("test.txt"));
@@ -58,7 +53,6 @@ public class FileBackedTasksManagerTest extends TaskManagersTest <FileBackedTask
         assertEquals(2, manager1.getSubtasks().size());
         assertEquals(2, manager1.getEpics().size());
         assertEquals(0, manager1.getHistory().size());
-
     }
 
     @Test
@@ -77,7 +71,6 @@ public class FileBackedTasksManagerTest extends TaskManagersTest <FileBackedTask
         assertEquals(2, manager1.getTasks().size());
         assertEquals(0, manager1.getSubtasks().size());
         assertEquals(2, manager1.getEpics().size());
-
     }
 
 

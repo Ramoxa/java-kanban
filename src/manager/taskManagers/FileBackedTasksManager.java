@@ -1,4 +1,5 @@
 package manager.taskManagers;
+
 import manager.exceptions.ManagerSaveException;
 import tasks.Epic;
 import tasks.Subtask;
@@ -10,6 +11,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
+    private final File file;
+
+    public FileBackedTasksManager(File file) {
+        this.file = file;
+    }
+
     public static void main(String[] args) {
 
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("data"));
@@ -31,10 +38,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         System.out.println(manager2.getHistory());
 
     }
-    private final File file;
 
-    public FileBackedTasksManager(File file) {
-        this.file = file;
+    // реализовал тот же метод с учетом комментариев второго ревью
+    public static FileBackedTasksManager loadFromFile(File file) {
+        FileBackedTasksManager manager = new FileBackedTasksManager(file);
+        manager.loadFromFile();
+        return manager;
     }
 
     private void save() {
@@ -100,13 +109,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла");
         }
-    }
-
-    // реализовал тот же метод с учетом комментариев второго ревью
-    public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager manager = new FileBackedTasksManager(file);
-        manager.loadFromFile();
-        return manager;
     }
 
     @Override

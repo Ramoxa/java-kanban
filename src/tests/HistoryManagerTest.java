@@ -1,37 +1,30 @@
 package tests;
 
+import manager.Managers;
 import manager.historyManagers.HistoryManager;
 import manager.taskManagers.InMemoryTaskManager;
-import manager.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.Epic;
-import tasks.Subtask;
 import tasks.Task;
 
 import java.time.Instant;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class HistoryManagerTest {
     protected Task task;
-    protected Epic epic;
-    protected Subtask subTask;
     private HistoryManager manager;
 
     @BeforeEach
     public void loadManager() {
-
         manager = Managers.getDefaultHistory();
     }
 
     @BeforeEach
     void beforeEach() {
         task = new Task("1", "1111", Instant.EPOCH, 0);
-        epic = new Epic("222", "3333");
-
     }
 
     @Test

@@ -1,9 +1,9 @@
 package manager.taskManagers;
 
 import manager.Managers;
-import tasks.Status;
 import manager.historyManagers.HistoryManager;
 import tasks.Epic;
+import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
@@ -15,6 +15,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
     public HistoryManager historyManager;
     protected int createId = 0;
 
@@ -25,10 +26,6 @@ public class InMemoryTaskManager implements TaskManager {
     private int getNextID() {
         return ++createId;
     }
-
-    final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
-            Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
-
 
     @Override
     public Task getTask(int id) {
@@ -96,15 +93,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask createSubTask(Subtask subtask) {
         if (subtask != null) {
-        prioritizedTasks.add(subtask);
-        subtask.setId(createId++);
-        subtask.setStatus(Status.NEW);
-        subtasks.put(subtask.getId(), subtask);
-        Epic epic = epics.get(subtask.getEpicId());
-        return subtask;
-    } else {
+            prioritizedTasks.add(subtask);
+            subtask.setId(createId++);
+            subtask.setStatus(Status.NEW);
+            subtasks.put(subtask.getId(), subtask);
+            Epic epic = epics.get(subtask.getEpicId());
+            return subtask;
+        } else {
             return null;
-        } }
+        }
+    }
 
     @Override
     public void updateTask(Task task) {
@@ -144,9 +142,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubtask(int id) {
         subtasks.get(id).setStatus(Status.DONE);
-        if (subtasks.containsKey(id)) {
-            subtasks.remove(id);
-        }
+        subtasks.remove(id);
     }
 
 

@@ -2,9 +2,8 @@ package tests;
 
 import manager.taskManagers.InMemoryTaskManager;
 import org.junit.jupiter.api.Test;
-import tasks.Status;
-
 import tasks.Epic;
+import tasks.Status;
 
 import java.util.List;
 import java.util.Objects;

@@ -9,18 +9,14 @@ import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subtasks;
-
     private Instant endTime = Instant.ofEpochSecond(0);
-
     public Epic(int id, String name, Status status, String description, Instant startTime, long duration) {
-
         super(name, description, startTime, duration);
         this.endTime = super.getEndTime();
         this.subtasks = new ArrayList<>();
         this.taskType = TaskType.EPIC;
         this.status = status;
         this.id = id;
-
     }
 
     public Epic(String name, String description) {
@@ -34,22 +30,15 @@ public class Epic extends Task {
     }
 
     public void updateEpicState(Map<Integer, Subtask> subs) {
-
         Instant startTime = subs.get(subtasks.get(0)).getStartTime();
         Instant endTime = subs.get(subtasks.get(0)).getEndTime();
-
         int isNew = 0;
         int isDone = 0;
-
         for (Integer id : getIDsOfSubtasks()) {
             Subtask subtask = subs.get(id);
-
             if (subtask.getStatus() == Status.NEW) isNew += 1;
-
             if (subtask.getStatus() == Status.DONE) isDone += 1;
-
             if (subtask.getStartTime().isBefore(startTime)) startTime = subtask.getStartTime();
-
             if (subtask.getEndTime().isAfter(endTime)) endTime = subtask.getEndTime();
         }
 
@@ -60,25 +49,19 @@ public class Epic extends Task {
         if (getIDsOfSubtasks().size() == isNew) {
             setStatus(Status.NEW);
             return;
-
         } else if (getIDsOfSubtasks().size() == isDone) {
             setStatus(Status.DONE);
             return;
         }
-
         setStatus(Status.IN_PROGRESS);
-
     }
 
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask.getId());
     }
-
-
     public List<Integer> getIDsOfSubtasks() {
         return subtasks;
     }
-
     public void addSubtaskIds(int id) {
         subtasks.add(id);
     }
