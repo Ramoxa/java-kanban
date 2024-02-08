@@ -7,6 +7,7 @@ import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public interface TaskManager {
@@ -56,4 +57,11 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
+    Set<Task> getPrioritizedTasks();
+
+    void deleteTasks();
+
+    void deleteEpics();
+
+    void deleteSubtasks();
 }

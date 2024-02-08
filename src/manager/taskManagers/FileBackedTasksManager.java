@@ -1,7 +1,9 @@
 package manager.taskManagers;
 
 import manager.exceptions.ManagerSaveException;
+import manager.historyManagers.HistoryManager;
 import tasks.Epic;
+import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskType;
@@ -17,38 +19,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         this.file = file;
     }
 
-    public static void main(String[] args) {
-
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("data"));
-
-        Task task1 = fileBackedTasksManager.createTask(new Task("1", "1111", Instant.EPOCH, 0));
-        Task task2 = fileBackedTasksManager.createTask(new Task("22", "22222", Instant.EPOCH, 0));
-        Epic epic1 = fileBackedTasksManager.createEpic(new Epic("1", "7777"));
-        Epic epic2 = fileBackedTasksManager.createEpic(new Epic("6666", "7777"));
-        Subtask subtask1 = fileBackedTasksManager.createSubTask(new Subtask("аа", "ааа", Instant.ofEpochSecond(11111), 0, epic1.getId()));
-        Subtask subtask2 = fileBackedTasksManager.createSubTask(new Subtask("bbbb", "qqqq", Instant.ofEpochSecond(22222), 0, epic2.getId()));
-
-        fileBackedTasksManager.getTask(task1.getId());
-        fileBackedTasksManager.getTask(task2.getId());
-
-        FileBackedTasksManager manager2 = FileBackedTasksManager.loadFromFile(new File("data"));
-        System.out.println(manager2.getTasks());
-        System.out.println(manager2.getEpics());
-        System.out.println(manager2.getSubtasks());
-        System.out.println(manager2.getHistory());
-
-    }
-
-    // реализовал тот же метод с учетом комментариев второго ревью
     public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager manager = new FileBackedTasksManager(file);
         manager.loadFromFile();
         return manager;
     }
 
-    private void save() {
-        try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
-            fileWriter.write("id,type,name,status,description,startTime,duration,endTime,epic" + "\n");
+    protected void save() {
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
+            fileWriter.write("id,type,name,status,description,startTime,duration,epic" + "\n");
 
             for (Task task : getListAllTasks()) {
                 fileWriter.write(Formatter.taskToString(task) + "\n");
@@ -61,15 +40,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             for (Subtask subtask : getListSubTasks()) {
                 fileWriter.write(Formatter.taskToString(subtask) + "\n");
             }
+
             fileWriter.write("\n");
             fileWriter.write(Formatter.historyToString(historyManager));
 
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка записи в файл");
+            throw new ManagerSaveException("Error writing to file");
         }
     }
 
-    // сделал метод приватным согласно первому ревью
     private void loadFromFile() {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             bufferedReader.readLine();
@@ -107,29 +86,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка загрузки из файла");
+            throw new ManagerSaveException("Error loading from file");
         }
-    }
-
-    @Override
-    public Task getTask(int id) {
-        Task savedTask = super.getTask(id);
-        save();
-        return savedTask;
-    }
-
-    @Override
-    public Subtask getSubtask(int id) {
-        Subtask savedSubtask = super.getSubtask(id);
-        save();
-        return savedSubtask;
-    }
-
-    @Override
-    public Epic getEpic(int id) {
-        Epic savedEpic = super.getEpic(id);
-        save();
-        return savedEpic;
     }
 
     @Override
@@ -141,9 +99,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public Subtask createSubTask(Subtask subtask) {
-        Subtask newSubtaskId = super.createSubTask(subtask);
+        Subtask newSubtask = super.createSubTask(subtask);
         save();
-        return newSubtaskId;
+        return newSubtask;
     }
 
     @Override

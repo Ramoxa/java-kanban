@@ -1,0 +1,8 @@
+id,type,name,status,description,startTime,duration,epic
+1,TASK,Task1,NEW,Task1Desk,1970-01-01T00:00:00Z,60,
+2,TASK,Task3,NEW,Task3Desk,1970-01-01T00:00:00Z,60,
+3,EPIC,epic1,NEW,epic1desk,1970-01-01T00:00:00Z,0,
+3,SUBTASK,Subtask1,NEW,descSub1,1970-01-01T00:00:00Z,10,3
+4,SUBTASK,Subtask2,NEW,descSub2,1970-01-01T00:00:00Z,10,3
+5,SUBTASK,Subtask3,NEW,descSub3,1970-01-01T00:00:00Z,10,3
+

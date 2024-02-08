@@ -16,6 +16,11 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
+
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
     public HistoryManager historyManager;
     protected int createId = 0;
 
@@ -199,6 +204,38 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.addTask(subtasks.get(id));
         return subtasks.get(id);
 
+    }
+
+    @Override
+    public void deleteTasks() {
+        for (Integer removeTask : tasks.keySet()) {
+            historyManager.remove(removeTask);
+        }
+        tasks.clear();
+    }
+
+    @Override
+    public void deleteEpics() {
+        for (Integer removeEpic : epics.keySet()) {
+            historyManager.remove(removeEpic);
+        }
+        epics.clear();
+        deleteSubtasks();
+    }
+
+    @Override
+    public void deleteSubtasks() {
+        if (!epics.isEmpty()) {
+            for (Epic epic : epics.values()) {
+                epic.setStatus(Status.NEW);
+                updateEpic(epic);
+                epic.getIDsOfSubtasks().clear();
+            }
+            for (Integer removeSubtask : subtasks.keySet()) {
+                historyManager.remove(removeSubtask);
+            }
+        }
+        subtasks.clear();
     }
 }
 
