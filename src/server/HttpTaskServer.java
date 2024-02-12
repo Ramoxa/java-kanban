@@ -67,9 +67,8 @@ public class HttpTaskServer {
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
         String query = exchange.getRequestURI().getQuery();
-        int idQuery = 0;
         if (query != null) {
-            idQuery = Integer.parseInt(query.replaceFirst("id=", ""));
+            int idQuery = Integer.parseInt(query.replaceFirst("id=", ""));
         }
 
         switch (method) {
@@ -98,18 +97,18 @@ public class HttpTaskServer {
                 } else {
                     if (Pattern.matches("/tasks/task/", path)) {
                         int id = Integer.parseInt(query.substring(3));
-                        Task task = taskManager.getTaskById(id);
+                        Task task = taskManager.getTask(id);
                         String taskToString = gson.toJson(task);
                         writeResponse(exchange, taskToString, 200);
                     }
                     if (Pattern.matches("/tasks/epic/", path)) {
                         int id = Integer.parseInt(query.substring(3));
-                        Epic epic = taskManager.getEpicById(id);
+                        Epic epic = taskManager.getEpic(id);
                         String subtaskToString = gson.toJson(epic);
                     }
                     if (Pattern.matches("/tasks/subtask/", path)) {
                         int id = Integer.parseInt(query.substring(3));
-                        Subtask subtask = taskManager.getSubtaskById(id);
+                        Subtask subtask = taskManager.getSubtask(id);
                         String subtaskToString = gson.toJson(subtask);
                     }
                 }
@@ -177,7 +176,7 @@ public class HttpTaskServer {
                     }
                     if (Pattern.matches("/tasks/epic/", path)) {
                         int id = Integer.parseInt(query.substring(3));
-                        taskManager.getEpicById(id);
+                        taskManager.getEpic(id);
                         exchange.sendResponseHeaders(200, 0);
                     }
                     if (Pattern.matches("/tasks/subtask/", path)) {

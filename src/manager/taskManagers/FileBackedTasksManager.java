@@ -1,16 +1,10 @@
 package manager.taskManagers;
 
 import manager.exceptions.ManagerSaveException;
-import manager.historyManagers.HistoryManager;
-import tasks.Epic;
-import tasks.Status;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TaskType;
+import tasks.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
@@ -91,6 +85,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
+    public Task getTask(int id) {
+        Task taskId = super.getTask(id);
+        save();
+        return taskId;
+    }
+
+
+    @Override
+    public Subtask getSubtask(int id) {
+        Subtask subtaskId = super.getSubtask(id);
+        save();
+        return subtaskId;
+    }
+
+    @Override
+    public Epic getEpic(int id) {
+        Epic epicId = super.getEpic(id);
+        save();
+        return epicId;
+    }
+
+
+    @Override
     public Task createTask(Task task) {
         Task newTask = super.createTask(task);
         save();
@@ -131,13 +148,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public void deleteSubtask(int id) {
-        super.deleteSubtask(id);
+        if (subtasks.containsKey(id)) {
+            Subtask subtask = subtasks.get(id);
+            Epic epic = epics.get(subtask.getEpicId());
+            if (epic != null) {
+                epic.getIDsOfSubtasks().remove(subtask);
+                if (epic.getIDsOfSubtasks().isEmpty()) {
+                    epic.setStatus(Status.NEW);
+                }
+                updateEpic(epic);
+            }
+            subtasks.remove(id);
+            historyManager.remove(id);
+        }
         save();
     }
 
     @Override
     public void deleteTask(int id) {
-        super.deleteTask(id);
+        if (tasks.containsKey(id)) {
+            Task task = tasks.get(id);
+            historyManager.remove(id);
+            tasks.remove(id);
+        }
         save();
     }
 }

@@ -1,6 +1,5 @@
 package server;
 
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import manager.exceptions.ManagerSaveException;
@@ -15,14 +14,14 @@ public class KVTaskClient {
     protected final String apikey;
     private final String url;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+    private final HttpResponse.BodyHandler handler = HttpResponse.BodyHandlers.ofString();
 
     public KVTaskClient(String url) {
         this.url = url;
         try {
             HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(url + "/register")).build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, handler);
             apikey = response.body();
         } catch (IOException | InterruptedException exception) {
             throw new ManagerSaveException("Error");
@@ -47,17 +46,14 @@ public class KVTaskClient {
         URI uri = URI.create(url + "/load/" + key + "?API_TOKEN=" + apikey);
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, handler);
             if (response.statusCode() == 200) {
-                JsonElement jsonElement = JsonParser.parseString(response.body());
-                if (!jsonElement.isJsonObject()) {
-                    System.out.println("Не верный ответ сервера");
-                    return response.body();
-                }
+                return response.body();
+            } else {
+                throw new ManagerSaveException("Ошибка загрузки данных с сервера");
             }
         } catch (IOException | InterruptedException exception) {
-            throw new ManagerSaveException("Error");
+            throw new ManagerSaveException("Ошибка загрузки данных с сервера");
         }
-        return null;
     }
 }

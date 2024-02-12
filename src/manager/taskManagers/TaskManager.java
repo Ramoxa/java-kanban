@@ -38,6 +38,8 @@ public interface TaskManager {
 
     void deleteSubtask(int id);
 
+    void deleteEpic(int id);
+
     void deleteTask(int id);
 
     List<Task> getHistory();
@@ -48,15 +50,6 @@ public interface TaskManager {
 
     List<Task> getListAllTasks();
 
-    List<Epic> getEpicsByStatus(Status status);
-
-
-    Task getTaskById(int id);
-
-    Epic getEpicById(int id);
-
-    Subtask getSubtaskById(int id);
-
     Set<Task> getPrioritizedTasks();
 
     void deleteTasks();
@@ -64,4 +57,6 @@ public interface TaskManager {
     void deleteEpics();
 
     void deleteSubtasks();
+
+    List<Epic> getEpicsByStatus(Status status);
 }

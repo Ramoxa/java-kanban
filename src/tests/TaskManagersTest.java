@@ -20,6 +20,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
     protected Epic epic;
     protected Subtask subTask;
 
+
     @Test
     public void testGetTask() {
         taskManager.createTask(task);
@@ -82,12 +83,9 @@ abstract class TaskManagersTest<T extends TaskManager> {
 
 
     @Test
-    void deleteSubTask() {
-        taskManager.createSubTask(subTask);
-        List<Subtask> subtasks = taskManager.getSubtasks();
-        assertEquals(2, subtasks.size());
+    public void deleteSubtask() {
         taskManager.deleteSubtask(subTask.getId());
-        assertFalse(taskManager.getTasks().contains(subTask));
+        assertTrue(taskManager.getSubtasks().isEmpty());
     }
 
     @Test

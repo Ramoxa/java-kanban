@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class HttpTaskManager extends FileBackedTasksManager {
     private KVTaskClient taskClient;
     private final Gson gson = Managers.getGson();
+    private final String url;
 
     public HttpTaskManager(String url) {
         this(url, false);
@@ -23,6 +24,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public HttpTaskManager(String url, boolean isLoad) {
         super(null);
+        this.url = url;
         taskClient = new KVTaskClient(url);
         if (isLoad) {
             load();
@@ -43,15 +45,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String subtaskJson = gson.toJson(subtaskList);
         taskClient.put("subtasks", subtaskJson);
 
-        List<Integer> historyList = historyManager.getHistory().stream()
+        List<Task> historyList = historyManager.getHistory();
+        List<Integer> historyIds = historyList.stream()
                 .map(Task::getId)
                 .collect(Collectors.toList());
-        String historyJson = gson.toJson(historyList);
+        String historyJson = gson.toJson(historyIds);
         taskClient.put("history", historyJson);
     }
 
     public void load() {
-        Type taskListType = new TypeToken<ArrayList<Task>>() {}.getType();
+        Type taskListType = new TypeToken<List<Task>>() {}.getType();
         List<Task> taskList = gson.fromJson(taskClient.load("tasks"), taskListType);
         for (Task task : taskList) {
             int taskId = task.getId();
@@ -62,7 +65,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             prioritizedTasks.add(task);
         }
 
-        Type epicListType = new TypeToken<ArrayList<Epic>>() {}.getType();
+        Type epicListType = new TypeToken<List<Epic>>() {}.getType();
         List<Epic> epicList = gson.fromJson(taskClient.load("epics"), epicListType);
         for (Epic epic : epicList) {
             int epicId = epic.getId();
@@ -72,7 +75,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             epics.put(epicId, epic);
         }
 
-        Type subtaskListType = new TypeToken<ArrayList<Subtask>>() {}.getType();
+        Type subtaskListType = new TypeToken<List<Subtask>>() {}.getType();
         List<Subtask> subtaskList = gson.fromJson(taskClient.load("subtasks"), subtaskListType);
         for (Subtask subtask : subtaskList) {
             int subtaskId = subtask.getId();
@@ -83,7 +86,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             prioritizedTasks.add(subtask);
         }
 
-        Type historyListType = new TypeToken<ArrayList<Integer>>() {}.getType();
+        Type historyListType = new TypeToken<List<Integer>>() {}.getType();
         List<Integer> historyList = gson.fromJson(taskClient.load("history"), historyListType);
         for (Integer taskId : historyList) {
             if (tasks.containsKey(taskId)) {

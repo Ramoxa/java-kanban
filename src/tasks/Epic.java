@@ -30,26 +30,32 @@ public class Epic extends Task {
     }
 
     public void updateEpicState(Map<Integer, Subtask> subs) {
+        if (subtasks.isEmpty()) {
+            return;
+        }
+
         Instant startTime = subs.get(subtasks.get(0)).getStartTime();
         Instant endTime = subs.get(subtasks.get(0)).getEndTime();
         int isNew = 0;
         int isDone = 0;
         for (Integer id : getIDsOfSubtasks()) {
             Subtask subtask = subs.get(id);
-            if (subtask.getStatus() == Status.NEW) isNew += 1;
-            if (subtask.getStatus() == Status.DONE) isDone += 1;
-            if (subtask.getStartTime().isBefore(startTime)) startTime = subtask.getStartTime();
-            if (subtask.getEndTime().isAfter(endTime)) endTime = subtask.getEndTime();
+            if (subtask != null) {
+                if (subtask.getStatus() == Status.NEW) isNew += 1;
+                if (subtask.getStatus() == Status.DONE) isDone += 1;
+                if (subtask.getStartTime().isBefore(startTime)) startTime = subtask.getStartTime();
+                if (subtask.getEndTime().isAfter(endTime)) endTime = subtask.getEndTime();
+            }
         }
 
         this.startTime = startTime;
         this.endTime = endTime;
         this.duration = Duration.between(startTime, endTime).toMinutes();
 
-        if (getIDsOfSubtasks().size() == isNew) {
+        if (subtasks.size() == isNew) {
             setStatus(Status.NEW);
             return;
-        } else if (getIDsOfSubtasks().size() == isDone) {
+        } else if (subtasks.size() == isDone) {
             setStatus(Status.DONE);
             return;
         }

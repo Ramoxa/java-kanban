@@ -1,14 +1,14 @@
 package server;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
@@ -31,30 +31,38 @@ public class KVServer {
         try {
             System.out.println("\n/load");
             if (!hasAuth(h)) {
-                System.out.println("Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
+                System.out.println("Запрос не авторизован, нужен параметр в query API_TOKEN со значением API ключа");
                 h.sendResponseHeaders(403, 0);
                 return;
             }
+
             if ("GET".equals(h.getRequestMethod())) {
-                if(!data.containsKey(apiToken)){
-                    System.out.println("API не имеет значения по данному Api");
-                    h.sendResponseHeaders(400,0);
+                var key = h.getRequestURI().getPath().substring("/load/".length());
+                if (key.isEmpty()) {
+                    System.out.println("Ключ(key) для загрузки пустой. Ключ(key) указывается в пути: /load/{key}");
+                    h.sendResponseHeaders(400, 0);
                     return;
                 }
-                sendText(h,data.get(apiToken));
-                System.out.println("Метод /load успешно загружен!");
+
+                var value = data.get(key);
+                if (value.isEmpty()) {
+                    System.out.println("Значение(value) для загрузки пустое. Значение(value) указывается в теле запроса");
+                    h.sendResponseHeaders(400, 0);
+                    return;
+                }
+                sendText(h, value);
+                System.out.println("Значение для ключа " + key + " успешно обновлено!");
                 h.sendResponseHeaders(200, 0);
-            }else {
+            } else {
                 System.out.println("/load ждёт GET-запрос, а получил: " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
             }
-
         } finally {
             h.close();
         }
     }
 
-    public void stop(){
+    public void stop() {
         server.stop(2);
     }
 

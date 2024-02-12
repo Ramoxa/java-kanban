@@ -36,7 +36,6 @@ public class Main {
         taskManager.getTasks().forEach(System.out::println);
         taskManager.getEpics().forEach(System.out::println);
         taskManager.getSubtasks().forEach(System.out::println);
-        System.out.println();
 
     }
 }

@@ -10,9 +10,10 @@ import java.time.Instant;
 
 
 class InMemoryTaskManagerTest extends TaskManagersTest<InMemoryTaskManager> {
+
     @BeforeEach
     public void startMethod() {
-        taskManager = new InMemoryTaskManager();
+        super.taskManager = new InMemoryTaskManager();
         task = new Task("Task", "posolil", Instant.EPOCH, 0);
         task.setId(1);
         taskManager.createTask(task);

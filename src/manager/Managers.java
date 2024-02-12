@@ -8,7 +8,7 @@ import manager.taskManagers.HttpTaskManager;
 import manager.taskManagers.TaskManager;
 
 public class Managers {
-    public static TaskManager getDefault() {
+    public static HttpTaskManager getDefault() {
         return new HttpTaskManager("http://localhost:8078");
     }
 
