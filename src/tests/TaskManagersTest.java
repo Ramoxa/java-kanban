@@ -68,7 +68,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
         final Subtask savedTask = taskManager.getSubtask(subTask.getId());
         assertNotNull(savedTask);
         assertEquals(subTask, savedTask);
-        final List<Subtask> subtasks = taskManager.getListSubTasks();
+        final List<Subtask> subtasks = taskManager.getSubtasks();
         assertNotNull(subtasks);
         Assertions.assertEquals(2, subtasks.size());
         Assertions.assertEquals(subTask, subtasks.get(0));
@@ -77,7 +77,7 @@ abstract class TaskManagersTest<T extends TaskManager> {
     @Test
     void deleteTask() {
         taskManager.createTask(task);
-        List<Task> tasks = taskManager.getListAllTasks();
+        List<Task> tasks = taskManager.getTasks();
         Assertions.assertEquals(2, tasks.size());
     }
 

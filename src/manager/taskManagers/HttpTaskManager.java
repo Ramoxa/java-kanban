@@ -1,6 +1,7 @@
 package manager.taskManagers;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import manager.Managers;
 import server.KVTaskClient;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private KVTaskClient taskClient;
-    private final Gson gson = Managers.getGson();
+    private final Gson gson = new GsonBuilder().create();
     private final String url;
 
     public HttpTaskManager(String url) {
@@ -32,7 +33,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    public void save() {
+    protected void save() {
         List<Task> taskList = new ArrayList<>(tasks.values());
         String taskJson = gson.toJson(taskList);
         taskClient.put("tasks", taskJson);
@@ -53,7 +54,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         taskClient.put("history", historyJson);
     }
 
-    public void load() {
+    protected void load() {
         Type taskListType = new TypeToken<List<Task>>() {}.getType();
         List<Task> taskList = gson.fromJson(taskClient.load("tasks"), taskListType);
         for (Task task : taskList) {

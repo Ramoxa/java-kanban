@@ -23,15 +23,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             fileWriter.write("id,type,name,status,description,startTime,duration,epic" + "\n");
 
-            for (Task task : getListAllTasks()) {
+            for (Task task : getTasks()) {
                 fileWriter.write(Formatter.taskToString(task) + "\n");
             }
 
-            for (Epic epic : getListAllEpic()) {
+            for (Epic epic : getEpics()) {
                 fileWriter.write(Formatter.taskToString(epic) + "\n");
             }
 
-            for (Subtask subtask : getListSubTasks()) {
+            for (Subtask subtask : getSubtasks()) {
                 fileWriter.write(Formatter.taskToString(subtask) + "\n");
             }
 

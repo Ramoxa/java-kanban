@@ -1,11 +1,8 @@
 package manager;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import manager.historyManagers.HistoryManager;
 import manager.historyManagers.InMemoryHistoryManager;
 import manager.taskManagers.HttpTaskManager;
-import manager.taskManagers.TaskManager;
 
 public class Managers {
     public static HttpTaskManager getDefault() {
@@ -16,9 +13,5 @@ public class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static Gson getGson() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        return gsonBuilder.create();
-    }
 }
 

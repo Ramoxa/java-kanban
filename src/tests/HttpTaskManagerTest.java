@@ -82,7 +82,7 @@ public class HttpTaskManagerTest extends TaskManagersTest <HttpTaskManager>  {
         final Subtask savedTask = taskManager.getSubtask(subTask.getId());
         assertNotNull(savedTask);
         assertEquals(subTask, savedTask);
-        final List<Subtask> subtasks = taskManager.getListSubTasks();
+        final List<Subtask> subtasks = taskManager.getSubtasks();
         assertNotNull(subtasks);
         Assertions.assertEquals(3, subtasks.size());
         Assertions.assertEquals(subTask, subtasks.get(0));

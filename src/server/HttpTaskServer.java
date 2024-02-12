@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
@@ -28,7 +29,7 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        gson = Managers.getGson();
+        gson = new GsonBuilder().create();
         server.createContext("/tasks", this::handle);
     }
 
@@ -37,17 +38,6 @@ public class HttpTaskServer {
         kvServer.start();
         HttpTaskServer httpTaskServer = new HttpTaskServer(Managers.getDefault());
         httpTaskServer.start();
-    }
-
-    private static void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
-        if (responseString.equals("")) {
-            exchange.sendResponseHeaders(responseCode, 0);
-        } else {
-            exchange.sendResponseHeaders(responseCode, 0);
-            try (OutputStream outputStream = exchange.getResponseBody()) {
-                outputStream.write(responseString.getBytes(UTF_8));
-            }
-        }
     }
 
     public void start() {
@@ -191,6 +181,17 @@ public class HttpTaskServer {
         }
 
         exchange.close();
+    }
+
+    private static void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
+        if (responseString.equals("")) {
+            exchange.sendResponseHeaders(responseCode, 0);
+        } else {
+            exchange.sendResponseHeaders(responseCode, 0);
+            try (OutputStream outputStream = exchange.getResponseBody()) {
+                outputStream.write(responseString.getBytes(UTF_8));
+            }
+        }
     }
 
     private String readText(HttpExchange exchange) throws IOException {

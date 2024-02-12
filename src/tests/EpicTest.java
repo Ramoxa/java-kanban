@@ -6,7 +6,6 @@ import tasks.Epic;
 import tasks.Status;
 
 import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,8 +26,18 @@ public class EpicTest {
         Epic epic2 = new Epic("аа", "аа");
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
-        List<Epic> epicList = taskManager.getEpicsByStatus(Status.NEW);
+        List<Epic> epicList = taskManager.getEpics();
         assertEquals(2, epicList.size());
+    }
+
+    @Test
+    public void testInProgressEpic() {
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        Epic epic1 = new Epic("аа", "аа");
+        taskManager.createEpic(epic1);
+        epic1.setStatus(Status.IN_PROGRESS);
+        taskManager.updateEpic(epic1);
+        assertEquals(Status.IN_PROGRESS, epic1.getStatus());
     }
 
     @Test
@@ -38,8 +47,7 @@ public class EpicTest {
         taskManager.createEpic(epic);
         epic.setStatus(Status.DONE);
         taskManager.updateEpic(epic);
-        List<Epic> epicList = taskManager.getEpicsByStatus(Status.DONE);
-        assertEquals(1, epicList.size());
+        assertEquals(Status.DONE, epic.getStatus());
     }
 
     @Test
@@ -53,23 +61,7 @@ public class EpicTest {
         epic2.setStatus(Status.DONE);
         taskManager.updateEpic(epic1);
         taskManager.updateEpic(epic2);
-
-        if (epic2 == taskManager.getEpicsByStatus(Status.DONE) && Objects.equals(epic1, taskManager.getEpicsByStatus(Status.NEW))) {
-            List<Epic> epicList = taskManager.getEpics();
-            assertEquals(2, epicList.size());
-        }
+        assertEquals(Status.NEW, epic1.getStatus());
+        assertEquals(Status.DONE, epic2.getStatus());
     }
-
-    @Test
-    public void testInProgressEpic() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-        Epic epic = new Epic("аа", "аа");
-        taskManager.createEpic(epic);
-        epic.setStatus(Status.IN_PROGRESS);
-        taskManager.updateEpic(epic);
-        List<Epic> epicList = taskManager.getEpicsByStatus(Status.IN_PROGRESS);
-        assertEquals(1, epicList.size());
-    }
-
-
 }

@@ -44,12 +44,6 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
-    List<Epic> getListAllEpic();
-
-    ArrayList<Subtask> getListSubTasks();
-
-    List<Task> getListAllTasks();
-
     Set<Task> getPrioritizedTasks();
 
     void deleteTasks();
@@ -58,5 +52,4 @@ public interface TaskManager {
 
     void deleteSubtasks();
 
-    List<Epic> getEpicsByStatus(Status status);
 }
